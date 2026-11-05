@@ -4,6 +4,7 @@ import { access, writeFile, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import {
   detectPlatform,
+  validatePostURL,
   publicIP,
   parseURL,
   resolvePublic,
@@ -40,7 +41,7 @@ test("domains and network boundaries", async () => {
   assert.equal(publicIP("8.8.8.8"), true);
   await assert.rejects(() => resolvePublic("localhost"));
   assert.throws(() => parseURL("https://youtube.com:22/a"));
-  assert.throws(() => detectPlatform("https://likee.video/@creator"));
+  assert.throws(() => validatePostURL("https://likee.video/@creator"));
 });
 test("proxy rejects internal HTTP and CONNECT destinations", async () => {
   const proxy = await createEgressProxy();
