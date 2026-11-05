@@ -163,14 +163,14 @@ export function createApp() {
         for (const [index, format] of formats.entries())
           files.push({
             path: await prepare(format, dir, index, signal, budget),
-            name: `OmniDL-${index + 1}.${format.extension}`,
+            name: `Crazibox-${index + 1}.${format.extension}`,
           });
         const zipped = req.body.archive === true || files.length > 1;
         const path = zipped
           ? await zipFiles(files, dir, signal)
           : files[0].path;
         await new Promise((resolve, reject) =>
-          res.download(path, zipped ? "OmniDL.zip" : files[0].name, (e) =>
+          res.download(path, zipped ? "Crazibox.zip" : files[0].name, (e) =>
             e ? reject(e) : resolve(),
           ),
         );
