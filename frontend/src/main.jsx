@@ -81,8 +81,8 @@ function App() {
       a.href = href;
       a.download =
         archive || ids.length > 1
-          ? "OmniDL.zip"
-          : `OmniDL.${media.items.find((i) => i.id === ids[0]).formats.find((f) => f.id === formats[ids[0]]).extension}`;
+          ? "Crazibox.zip"
+          : `Crazibox.${media.items.find((i) => i.id === ids[0]).formats.find((f) => f.id === formats[ids[0]]).extension}`;
       document.body.append(a);
       a.click();
       a.remove();
@@ -98,11 +98,11 @@ function App() {
   return (
     <div className="shell">
       <header>
-        <a className="brand" href="/" aria-label="OmniDL home">
+        <a className="brand" href="/" aria-label="Crazibox home">
           <span className="brand-icon">
             <ArrowDown size={20} />
           </span>
-          Omni<span>DL</span>
+          Crazi<span>box</span>
         </a>
         <span className="tagline">Paste. Detect. Download.</span>
       </header>
