@@ -44,6 +44,23 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Build production Docker image
+        run: docker build --pull -t crazibox:ci .
+
+      - name: Smoke-test production container
+        run: |
+          set -euo pipefail
+          docker run -d --name crazibox-ci -p 127.0.0.1:18080:10000 crazibox:ci
+          trap 'docker logs crazibox-ci; docker rm -f crazibox-ci >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18080/api/v1/health >/tmp/crazibox-health.json; then
+              break
+            fi
+            sleep 2
+          done
+          grep -q '"status":"ok"' /tmp/crazibox-health.json
+          curl --fail --silent http://127.0.0.1:18080/ | grep -q 'Crazibox'
+
       - name: Run backend tests
         run: npm test
 
