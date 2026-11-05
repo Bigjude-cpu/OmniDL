@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowDown,
+  ClipboardPaste,
   ArrowRight,
   Link,
   Check,
@@ -43,6 +44,22 @@ function App() {
     [notice, setNotice] = useState(""),
     [selected, setSelected] = useState([]),
     [formats, setFormats] = useState({});
+  async function pasteFromClipboard() {
+    setError("");
+    try {
+      if (!navigator.clipboard?.readText) {
+        throw new Error("Clipboard access is not available in this browser.");
+      }
+      const pasted = await navigator.clipboard.readText();
+      if (!pasted.trim()) {
+        setError("Your clipboard is empty. Copy a media link first.");
+        return;
+      }
+      setUrl(pasted.trim());
+    } catch {
+      setError("Clipboard access was blocked. Copy a link and paste it into the box manually.");
+    }
+  }
   async function analyze(e) {
     e.preventDefault();
     setLoading(true);
@@ -122,11 +139,17 @@ function App() {
               aria-label="Media URL"
               type="url"
               required
-              placeholder="Paste media URL…"
+              placeholder="Paste a TikTok, Instagram, YouTube or other link…"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={loading || busy}
             />
+            {!loading && !busy && (
+              <button className="paste-button" type="button" onClick={pasteFromClipboard}>
+                <ClipboardPaste size={16} />
+                <span>Paste</span>
+              </button>
+            )}
             {url && !loading && !busy && (
               <button
                 className="clear"
@@ -151,21 +174,14 @@ function App() {
             </button>
           </div>
         </form>
-        <div className="supported">
-          <span>TikTok</span>
-          <b>•</b>
-          <span>Instagram</span>
-          <b>•</b>
-          <span>YouTube</span>
-          <b>•</b>
-          <span>Pinterest</span>
-          <b>•</b>
-          <span>Facebook</span>
-          <b>•</b>
-          <span>X / Twitter</span>
-          <span className="auto">
-            <Check size={13} /> Automatically detected
-          </span>
+        <div className="supported" aria-label="Supported platforms">
+          <span className="platform-chip">TikTok</span>
+          <span className="platform-chip">Instagram</span>
+          <span className="platform-chip">YouTube</span>
+          <span className="platform-chip">Pinterest</span>
+          <span className="platform-chip">Facebook</span>
+          <span className="platform-chip">X / Twitter</span>
+          <span className="auto"><Check size={13} /> Auto-detected</span>
         </div>
         {error && (
           <div className="message error" role="alert">
