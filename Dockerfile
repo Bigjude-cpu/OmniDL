@@ -1,5 +1,15 @@
-FROM node:22-bookworm-slim
+# Build the static React frontend once, then copy only the compiled assets
+# into the runtime image. The Express server serves both the UI and API.
+FROM node:22-bookworm-slim AS frontend-build
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/package.json
+COPY frontend/package.json ./frontend/package.json
+RUN npm ci
+COPY frontend ./frontend
+RUN npm run build
 
+FROM node:22-bookworm-slim AS runtime
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates ffmpeg python3 python3-venv \
     && rm -rf /var/lib/apt/lists/*
@@ -27,6 +37,7 @@ RUN npm ci --omit=dev --workspace=backend --include-workspace-root=false \
     && npm cache clean --force
 
 COPY --chown=node:node backend ./backend
+COPY --from=frontend-build --chown=node:node /app/frontend/dist ./frontend/dist
 USER node
 EXPOSE 10000
 CMD ["node", "backend/src/server.js"]
