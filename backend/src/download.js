@@ -96,7 +96,7 @@ export async function prepare(format, dir, index, signal, budget) {
   return output;
 }
 export async function zipFiles(files, dir, signal) {
-  const path = join(dir, "OmniDL.zip"),
+  const path = join(dir, "Crazibox.zip"),
     zip = archiver("zip", { zlib: { level: 0 } });
   const done = pipeline(
     zip,
