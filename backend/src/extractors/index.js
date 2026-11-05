@@ -4,6 +4,7 @@ import { extract as twitter } from "./twitter.js";
 import { extract as tiktok } from "./tiktok.js";
 import { extract as instagram } from "./instagram.js";
 import { extract as youtube } from "./youtube.js";
+import { extract as likee } from "./likee.js";
 export const extractors = {
   Pinterest: pinterest,
   Facebook: facebook,
@@ -11,4 +12,5 @@ export const extractors = {
   TikTok: tiktok,
   Instagram: instagram,
   YouTube: youtube,
+  Likee: likee,
 };

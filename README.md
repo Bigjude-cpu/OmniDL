@@ -71,8 +71,9 @@ Built for local use and self-hosting. The React frontend connects to an Express 
 | Pinterest | Individual pins, pin.it short links | Images, pin videos, supported multi-item pins |
 | Facebook | Video posts, Reels, watch links, photo links, fb.watch/share links | Public videos and individually linked photos; profile/album crawling is excluded |
 | X / Twitter | Individual status links on x.com or twitter.com | Images, video, silent GIF-style MP4, mixed attachments |
+| Likee | Individual public `likee.video` short-video links | Video and available audio |
 
-All six platforms use the same normalized API and download controls. Public access is required. Short links are resolved through the validated HTTP client and checked again before extraction. Board, profile, feed, and search URLs are not download targets.
+All seven platforms use the same normalized API and download controls. Public access is required. Short links are resolved through the validated HTTP client and checked again before extraction. Board, profile, feed, and search URLs are not download targets.
 
 ### Media support
 
@@ -166,8 +167,30 @@ Copy [`.env.example`](.env.example) to `.env`. Local environment files are exclu
 | `MAX_CONCURRENT_JOBS` | `3` | Maximum concurrent API processing jobs |
 | `VITE_API_ORIGIN` | Empty | Public backend origin for a separately hosted frontend; set before building |
 | `FRONTEND_ORIGINS` | Empty | Comma-separated exact frontend origins allowed by backend CORS |
+| `AUDD_API_TOKEN` | Empty | Optional AudD token for website and Telegram music recognition; audio/video clips are limited to 10 MB |
+| `TELEGRAM_BOT_TOKEN` | Empty | Optional Telegram bot token created with BotFather |
+| `TELEGRAM_WEBHOOK_SECRET` | Empty | Secret header value used to authenticate Telegram webhook requests |
 
 If you change `PORT`, update the API proxy target in [`frontend/vite.config.js`](frontend/vite.config.js) as well.
+
+### Music recognition
+
+The website and Telegram bot can identify music from a short audio or video clip through AudD. Set `AUDD_API_TOKEN` in the hosting environment to enable the feature. The standard recognition endpoint accepts files up to 10 MB. A new AudD account may be eligible for a limited 300-request trial; requests beyond a trial or plan allowance are not free. Audio is sent to AudD for matching, so do not upload clips you do not have permission to share.
+
+### Telegram bot
+
+Create a bot with [@BotFather](https://t.me/BotFather), then add `TELEGRAM_BOT_TOKEN` and a long random `TELEGRAM_WEBHOOK_SECRET` to the Render environment variables. Never commit either secret to GitHub.
+
+Register the webhook after deploying:
+
+```bash
+curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
+  --data-urlencode "url=https://crazibox.onrender.com/api/v1/telegram/webhook" \
+  --data-urlencode "secret_token=<TELEGRAM_WEBHOOK_SECRET>"
+```
+
+The bot accepts public supported media links and audio/video messages for music recognition. It does not import Telegram users' social-media cookies or bypass private, login-gated, age-restricted, or DRM-protected content. On Render's free plan, the web service may sleep after inactivity, so Telegram responses can be delayed while it wakes.
+
 
 ## Architecture
 

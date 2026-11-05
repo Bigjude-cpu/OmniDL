@@ -18,6 +18,8 @@ import { get, save } from "./store.js";
 import { withTemp } from "./temp.js";
 import { prepare, zipFiles, limiter } from "./download.js";
 import { createSlots } from "./slots.js";
+import { recognizeAudio } from "./music.js";
+import { processTelegramUpdate, verifyTelegramWebhook } from "./telegram.js";
 export function createApp() {
   const app = express();
   let active = 0;
@@ -79,6 +81,41 @@ export function createApp() {
         release?.();
       }
     };
+  app.post(
+    "/api/v1/music/recognize",
+    express.raw({
+      type: ["audio/*", "video/*", "application/octet-stream"],
+      limit: "10mb",
+    }),
+    job(async (req, res, signal) => {
+      const contentType = String(req.headers["content-type"] || "")
+        .split(";")[0]
+        .trim()
+        .toLowerCase();
+      if (
+        !/^(?:audio|video)\/[a-z0-9.+-]+$/.test(contentType) &&
+        contentType !== "application/octet-stream"
+      )
+        throw new AppError("Upload an audio or video file to identify its music.");
+      if (!Buffer.isBuffer(req.body) || req.body.length === 0)
+        throw new AppError("Choose a non-empty audio or video file.");
+      const result = await recognizeAudio({
+        buffer: req.body,
+        mimeType: contentType,
+        signal,
+      });
+      res.json(result);
+    }),
+  );
+  app.post("/api/v1/telegram/webhook", (req, res) => {
+    if (!verifyTelegramWebhook(req.get("X-Telegram-Bot-Api-Secret-Token")))
+      return res.sendStatus(403);
+    const update = req.body;
+    res.sendStatus(200);
+    void processTelegramUpdate(update).catch((error) =>
+      console.error("Telegram update failed:", error.message),
+    );
+  });
   app.post(
     "/api/v1/media/analyze",
     job(async (req, res, signal) => {

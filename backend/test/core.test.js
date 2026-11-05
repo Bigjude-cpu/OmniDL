@@ -18,6 +18,7 @@ import http from "node:http";
 test("domains and network boundaries", async () => {
   assert.equal(detectPlatform("https://youtu.be/abc"), "YouTube");
   assert.equal(detectPlatform("https://vm.tiktok.com/a"), "TikTok");
+  assert.equal(detectPlatform("https://likee.video/@creator/video/123456"), "Likee");
   for (const url of [
     "file:///etc/passwd",
     "https://youtube.com.evil.test/a",
@@ -39,6 +40,7 @@ test("domains and network boundaries", async () => {
   assert.equal(publicIP("8.8.8.8"), true);
   await assert.rejects(() => resolvePublic("localhost"));
   assert.throws(() => parseURL("https://youtube.com:22/a"));
+  assert.throws(() => detectPlatform("https://likee.video/@creator"));
 });
 test("proxy rejects internal HTTP and CONNECT destinations", async () => {
   const proxy = await createEgressProxy();

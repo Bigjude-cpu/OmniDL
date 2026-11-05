@@ -962,3 +962,137 @@ select {
     font-size: 10px;
   }
 }
+
+
+/* Music recognition panel */
+.music-tool {
+  margin: 30px 0 24px;
+  padding: 20px;
+  border: 1px solid #e7e3fa;
+  border-radius: 14px;
+  background: #fbfaff;
+}
+.music-tool-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.music-tool-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: #eeeaff;
+  color: #6040e8;
+  flex: 0 0 auto;
+}
+.music-tool h2 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  color: #25312d;
+}
+.music-tool p {
+  margin: 0;
+  color: #718078;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.music-upload {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px 14px;
+}
+.music-upload label {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  font-weight: 650;
+  color: #4e5c55;
+}
+.music-upload input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #dcd7f1;
+  border-radius: 8px;
+  background: #fff;
+  color: #526058;
+  font-size: 12px;
+}
+.music-identify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 8px;
+  background: #6040e8;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.music-identify:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+.music-tool .music-privacy {
+  margin-top: 10px;
+  font-size: 11px;
+}
+.music-tool .music-error {
+  margin-top: 12px;
+  color: #b42318;
+  font-size: 13px;
+}
+.music-result {
+  display: grid;
+  gap: 5px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #e5e0fa;
+  border-radius: 9px;
+  background: #fff;
+}
+.music-result strong {
+  color: #242b28;
+  font-size: 16px;
+}
+.music-result span {
+  color: #47574e;
+  font-size: 14px;
+}
+.music-result small {
+  color: #829087;
+  font-size: 12px;
+}
+.music-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 7px;
+}
+.music-links a {
+  color: #6040e8;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+}
+.music-links a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 600px) {
+  .music-tool {
+    padding: 16px 13px;
+  }
+  .music-upload {
+    grid-template-columns: 1fr;
+  }
+  .music-identify {
+    width: 100%;
+  }
+}

@@ -51,9 +51,10 @@ export function detectPlatform(value) {
   if (belongs("x.com") || belongs("twitter.com")) return "X / Twitter";
   if (belongs("tiktok.com")) return "TikTok";
   if (belongs("instagram.com")) return "Instagram";
+  if (belongs("likee.video")) return "Likee";
   if (belongs("youtube.com") || h === "youtu.be") return "YouTube";
   throw new AppError(
-    "Use a TikTok, Instagram, YouTube, Pinterest, Facebook, or X media link.",
+    "Use a TikTok, Instagram, YouTube, Pinterest, Facebook, X, or Likee media link.",
   );
 }
 export async function resolvePublic(host) {
@@ -214,6 +215,7 @@ export function validatePostURL(value) {
     p = u.pathname;
   const validators = {
     Instagram: () => /^\/(p|reel|reels|tv)\/[^/]+\/?$/.test(p),
+    Likee: () => /^\/(?:@[^/]+\/video\/[A-Za-z0-9_]+|v\/[A-Za-z0-9_]+)\/?$/.test(p),
     YouTube: () =>
       u.hostname === "youtu.be"
         ? /^\/[^/]+\/?$/.test(p)

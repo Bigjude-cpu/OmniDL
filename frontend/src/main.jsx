@@ -43,7 +43,11 @@ function App() {
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [selected, setSelected] = useState([]),
-    [formats, setFormats] = useState({});
+    [formats, setFormats] = useState({}),
+    [musicFile, setMusicFile] = useState(null),
+    [musicLoading, setMusicLoading] = useState(false),
+    [musicError, setMusicError] = useState(""),
+    [musicResult, setMusicResult] = useState(null);
   async function pasteFromClipboard() {
     setError("");
     try {
@@ -112,6 +116,38 @@ function App() {
       setBusy(false);
     }
   }
+  async function identifyMusic(e) {
+    e.preventDefault();
+    if (!musicFile) {
+      setMusicError("Choose an audio or video file first.");
+      return;
+    }
+    if (musicFile.size > 10 * 1024 * 1024) {
+      setMusicError("The file must be 10 MB or smaller.");
+      return;
+    }
+    setMusicLoading(true);
+    setMusicError("");
+    setMusicResult(null);
+    try {
+      const response = await fetch(apiUrl("/api/v1/music/recognize"), {
+        method: "POST",
+        headers: {
+          "Content-Type": musicFile.type || "application/octet-stream",
+        },
+        body: musicFile,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Music recognition is unavailable.");
+      }
+      setMusicResult(data);
+    } catch (error) {
+      setMusicError(error.message || "Music recognition failed. Try another file.");
+    } finally {
+      setMusicLoading(false);
+    }
+  }
   return (
     <div className="shell">
       <header>
@@ -139,7 +175,7 @@ function App() {
               aria-label="Media URL"
               type="url"
               required
-              placeholder="Paste a TikTok, Instagram, YouTube or other link…"
+              placeholder="Paste a TikTok, Instagram, YouTube, Likee or other link…"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={loading || busy}
@@ -181,8 +217,57 @@ function App() {
           <span className="platform-chip">Pinterest</span>
           <span className="platform-chip">Facebook</span>
           <span className="platform-chip">X / Twitter</span>
+          <span className="platform-chip">Likee</span>
           <span className="auto"><Check size={13} /> Auto-detected</span>
         </div>
+        <section className="music-tool" aria-labelledby="music-tool-title">
+          <div className="music-tool-heading">
+            <span className="music-tool-icon"><Music2 size={20} /></span>
+            <div>
+              <h2 id="music-tool-title">Identify a song</h2>
+              <p>Upload a short audio or video clip to find its title and artist.</p>
+            </div>
+          </div>
+          <form className="music-upload" onSubmit={identifyMusic}>
+            <label htmlFor="music-file">Audio or video file · max 10 MB</label>
+            <input
+              id="music-file"
+              type="file"
+              accept="audio/*,video/*"
+              disabled={musicLoading}
+              onChange={(event) => {
+                const file = event.target.files?.[0] || null;
+                setMusicError("");
+                setMusicResult(null);
+                if (file && file.size > 10 * 1024 * 1024) {
+                  setMusicFile(null);
+                  setMusicError("The file must be 10 MB or smaller.");
+                  event.target.value = "";
+                  return;
+                }
+                setMusicFile(file);
+              }}
+            />
+            <button className="music-identify" type="submit" disabled={!musicFile || musicLoading}>
+              {musicLoading ? <LoaderCircle className="spin" size={17} /> : <Music2 size={17} />}
+              {musicLoading ? "Identifying…" : "Identify music"}
+            </button>
+          </form>
+          <p className="music-privacy">The clip is sent to the music-recognition provider for matching. Crazibox does not keep the upload.</p>
+          {musicError && <p className="music-error" role="alert">{musicError}</p>}
+          {musicResult && (
+            <div className="music-result" role="status">
+              <strong>{musicResult.title}</strong>
+              <span>{musicResult.artist}</span>
+              {musicResult.album && <small>{musicResult.album}</small>}
+              <div className="music-links">
+                {musicResult.songLink && <a href={musicResult.songLink} target="_blank" rel="noopener noreferrer">Song details</a>}
+                {musicResult.appleMusicUrl && <a href={musicResult.appleMusicUrl} target="_blank" rel="noopener noreferrer">Apple Music</a>}
+                {musicResult.spotifyUrl && <a href={musicResult.spotifyUrl} target="_blank" rel="noopener noreferrer">Spotify</a>}
+              </div>
+            </div>
+          )}
+        </section>
         {error && (
           <div className="message error" role="alert">
             <AlertCircle size={18} />
