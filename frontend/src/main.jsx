@@ -486,7 +486,7 @@ function App() {
               href="https://github.com/DzarelDeveloper/OmniDL"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="OmniDL source on GitHub (opens in a new tab)"
+              aria-label="Original OmniDL source on GitHub (opens in a new tab)"
             >
               GitHub ↗
             </a>
