@@ -898,3 +898,67 @@ select {
   margin: 0 9px;
   color: #a4afab;
 }
+
+/* Crazibox link-entry and platform badges */
+.paste-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid #e3ddff;
+  border-radius: 8px;
+  background: #f5f2ff;
+  color: #6040e8;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.paste-button:hover {
+  background: #ece7ff;
+}
+.supported {
+  align-items: center;
+  gap: 8px;
+}
+.supported .platform-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 4px 9px;
+  border: 1px solid #e8e3ff;
+  border-radius: 999px;
+  background: #f5f2ff;
+  color: #5c46bd;
+  font-size: 11px;
+  font-weight: 550;
+}
+.supported .auto {
+  font-size: 11px;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .url-box {
+    gap: 7px;
+    padding-left: 12px;
+  }
+  .paste-button {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+  }
+  .paste-button span {
+    display: none;
+  }
+  .supported {
+    gap: 6px;
+  }
+  .supported .platform-chip {
+    min-height: 25px;
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+}
