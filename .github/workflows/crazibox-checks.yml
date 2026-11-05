@@ -1,0 +1,54 @@
+name: Crazibox checks
+
+on:
+  push:
+    branches:
+      - bigjude-customization
+  pull_request:
+    branches:
+      - main
+      - bigjude-customization
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Python extractors
+        run: python -m pip install -r backend/requirements.txt
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Run backend tests
+        run: npm test
+
+      - name: Test Instagram adapter
+        run: python backend/python/test_instagram.py
+
+      - name: Test X adapter
+        run: python backend/python/test_twitter.py
