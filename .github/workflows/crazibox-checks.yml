@@ -9,6 +9,10 @@ on:
       - main
       - bigjude-customization
 
+concurrency:
+  group: crazibox-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
